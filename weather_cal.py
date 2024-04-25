@@ -27,10 +27,13 @@ client = DAVClient(cal_url, username=cal_user, password=cal_pass)
 calendars = client.principal().calendars()
 
 ok = False
-weather_data = []
-today = [".TODAY", ".TONIGHT"]
+now = datetime.now()
+today = now.date()
+title = f'Weather for {today:%B %d, %Y}'
+weather_data = [f"{now:%Y-%m-%d %H:%M}"]
+forecast_list = [".TODAY", ".TONIGHT"]
 any_cap = r"^\.FRI"
-pattern = r'^(%s)' % '|'.join(today)
+pattern = r'^(%s)' % '|'.join(forecast_list)
 city_weather = f"Including the city of {CITY}"
 for i, item in enumerate(splitted):
     match = re.match(pattern, item)
@@ -44,25 +47,40 @@ for i, item in enumerate(splitted):
         weather_data.append(item)
 weather = "\n".join(weather_data)
 
+
+existing_entry = False
 if calendars:
     # Use the first calendar
     calendar = calendars[0]
+    events = calendar.events()
+
+    for caldav_event in events:
+        ical_event = Calendar.from_ical(caldav_event.data)
+
+        for component in ical_event.walk():
+            if component.name == "VEVENT":
+                if component.get('summary') == title:
+                    component['description'] = weather
+                    caldav_event.data = ical_event.to_ical()
+                    caldav_event.save()
+                    print("Event updated.")
+                    existing_entry = True
+                    break
 
     # Create an all-day event for today
-    event = Calendar()
-    e = Event()
-    now = datetime.now()
-    today = now.date()
-    e.add('summary', f'Weather for {today:%B %d}')
-    e.add('dtstart', today)
-    e.add('dtend', (now + timedelta(days=1)).date())
-    e.add('dtstamp', now)
-    e.add('description', weather)
-    event.add_component(e)
+    if not existing_entry:
+        event = Calendar()
+        e = Event()
+        e.add('summary', title)
+        e.add('dtstart', today)
+        e.add('dtend', (now + timedelta(days=1)).date())
+        e.add('dtstamp', now)
+        e.add('description', weather)
+        event.add_component(e)
 
-    # Add the event to the calendar
-    calendar.add_event(event.to_ical())
+        # Add the event to the calendar
+        calendar.add_event(event.to_ical())
 
-    print("Event added successfully.")
+        print("Event added successfully.")
 else:
     print("No calendars found.")
