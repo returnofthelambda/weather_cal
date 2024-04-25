@@ -13,8 +13,8 @@ import os
 
 load_dotenv()
 
-url = "https://forecast.weather.gov/product.php?site=IND&issuedby=IND&product=ZFP&format=txt&version=1&glossary=0"
 
+url = os.getenv("NWS_URL")
 r = requests.get(url)
 splitted = r.text.split("\n")
 
