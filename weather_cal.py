@@ -32,17 +32,13 @@ today = now.date()
 title = f'Weather for {today:%B %d, %Y}'
 weather_data = [f"{now:%Y-%m-%d %H:%M}"]
 forecast_list = [".TODAY", ".TONIGHT"]
-any_cap = r"^\.FRI"
 pattern = r'^(%s)' % '|'.join(forecast_list)
 city_weather = f"Including the city of {CITY}"
 for i, item in enumerate(splitted):
     match = re.match(pattern, item)
-    other_match = re.match(any_cap, item)
     if item == city_weather or splitted[i-1] == city_weather or splitted[i-2] == city_weather:
         ok = True
         continue
-    if ok and other_match and not match:
-        ok = False
     if ok:
         weather_data.append(item)
 weather = "\n".join(weather_data)
