@@ -22,7 +22,7 @@ cal_url = os.getenv("CAL_URL")
 cal_user = os.getenv("CAL_USER")
 cal_name = os.getenv("CAL_NAME")
 cal_pass = os.getenv("CAL_PASS")
-city = os.getenv("city")
+city = os.getenv("CITY")
        
 client = DAVClient(cal_url, username=cal_user, password=cal_pass)
 calendars = client.principal().calendars()
