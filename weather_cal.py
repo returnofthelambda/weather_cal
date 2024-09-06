@@ -20,11 +20,15 @@ splitted = r.text.split("\n")
 
 cal_url = os.getenv("CAL_URL")
 cal_user = os.getenv("CAL_USER")
+cal_name = os.getenv("CAL_NAME")
 cal_pass = os.getenv("CAL_PASS")
-CITY = os.getenv("CITY")
+city = os.getenv("city")
        
 client = DAVClient(cal_url, username=cal_user, password=cal_pass)
 calendars = client.principal().calendars()
+for cal in list(calendars):
+    if cal_name == cal.name:
+        calendar = cal
 
 ok = False
 now = datetime.now()
@@ -33,7 +37,7 @@ title = f'Weather for {today:%B %d, %Y}'
 weather_data = [f"{now:%Y-%m-%d %H:%M}"]
 forecast_list = [".TODAY", ".TONIGHT"]
 pattern = r'^(%s)' % '|'.join(forecast_list)
-city_weather = f"Including the city of {CITY}"
+city_weather = f"Including the city of {city}"
 for i, item in enumerate(splitted):
     match = re.match(pattern, item)
     if item == city_weather or splitted[i-1] == city_weather or splitted[i-2] == city_weather:
@@ -45,9 +49,9 @@ weather = "\n".join(weather_data)
 
 
 existing_entry = False
-if calendars:
+if calendar:
     # Use the first calendar
-    calendar = calendars[0]
+    # calendar = calendars[0]
     events = calendar.events()
 
     for caldav_event in events:
