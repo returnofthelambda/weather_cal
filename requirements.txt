@@ -12,6 +12,6 @@ requests==2.32.4
 six==1.16.0
 soupsieve==2.5
 tzlocal==5.2
-urllib3==2.2.2
+urllib3==2.5.0
 vobject==0.9.7
 x-wr-timezone==0.0.7
