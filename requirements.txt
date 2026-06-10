@@ -3,9 +3,9 @@ certifi==2024.7.4
 charset-normalizer==3.3.2
 icalendar==5.0.12
 idna==3.15
-lxml==5.2.1
+lxml==6.1.0
 python-dateutil==2.9.0.post0
-python-dotenv==1.0.1
+python-dotenv==1.2.2
 pytz==2024.1
 recurring-ical-events==2.2.1
 requests==2.33.0
